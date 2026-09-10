@@ -1,0 +1,143 @@
+{
+  "menu": {
+    "name": "CafeBot Menu",
+    "currency": "USD",
+    "categories": [
+      {
+        "id": "coffee",
+        "name": "Coffee"
+      },
+      {
+        "id": "tea",
+        "name": "Tea"
+      },
+      {
+        "id": "pastries",
+        "name": "Pastries"
+      }
+    ],
+    "items": [
+      {
+        "id": "CF-001",
+        "name": "Espresso",
+        "description": "A rich, concentrated shot of freshly brewed coffee.",
+        "category": "coffee",
+        "price": 2.50,
+        "sizes": ["Small", "Regular"],
+        "allergens": [],
+        "dietary": ["Vegan", "Dairy-Free", "Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "CF-002",
+        "name": "Latte",
+        "description": "Smooth espresso steamed with creamy milk and a light foam topping.",
+        "category": "coffee",
+        "price": 3.50,
+        "sizes": ["Small", "Regular", "Large"],
+        "allergens": ["Milk"],
+        "dietary": ["Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "CF-003",
+        "name": "Cappuccino",
+        "description": "Equal parts espresso, steamed milk, and thick foam.",
+        "category": "coffee",
+        "price": 3.50,
+        "sizes": ["Small", "Regular"],
+        "allergens": ["Milk"],
+        "dietary": ["Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "CF-004",
+        "name": "Mocha",
+        "description": "Espresso blended with chocolate sauce and steamed milk, topped with whipped cream.",
+        "category": "coffee",
+        "price": 4.00,
+        "sizes": ["Regular", "Large"],
+        "allergens": ["Milk", "Soy", "Gluten"],
+        "dietary": [],
+        "available": true
+      },
+      {
+        "id": "CF-005",
+        "name": "Americano",
+        "description": "Espresso topped with hot water for a bold, lighter brew.",
+        "category": "coffee",
+        "price": 3.00,
+        "sizes": ["Small", "Regular", "Large"],
+        "allergens": [],
+        "dietary": ["Vegan", "Dairy-Free", "Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "CH-001",
+        "name": "Green Tea",
+        "description": "Delicate Japanese green tea steamed to bring out a smooth, earthy flavour.",
+        "category": "tea",
+        "price": 2.50,
+        "sizes": ["Small", "Regular"],
+        "allergens": [],
+        "dietary": ["Vegan", "Dairy-Free", "Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "CH-002",
+        "name": "Chai Latte",
+        "description": "Spiced black tea combined with steamed milk and a hint of sweetness.",
+        "category": "tea",
+        "price": 3.75,
+        "sizes": ["Regular", "Large"],
+        "allergens": ["Milk"],
+        "dietary": ["Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "CH-003",
+        "name": "Herbal Mint Tea",
+        "description": "Refreshing blend of fresh mint leaves steeped to perfection.",
+        "category": "tea",
+        "price": 2.25,
+        "sizes": ["Small", "Regular"],
+        "allergens": [],
+        "dietary": ["Vegan", "Dairy-Free", "Gluten-Free"],
+        "available": true
+      },
+      {
+        "id": "PS-001",
+        "name": "Blueberry Muffin",
+        "description": "Warm muffin loaded with juicy blueberries and a crumbly top.",
+        "category": "pastries",
+        "price": 2.75,
+        "sizes": ["Standard"],
+        "allergens": ["Gluten", "Eggs", "Milk"],
+        "dietary": [],
+        "available": true
+      },
+      {
+        "id": "PS-002",
+        "name": "Chocolate Croissant",
+        "description": "Flaky buttery croissant filled with rich chocolate ganache.",
+        "category": "pastries",
+        "price": 3.50,
+        "sizes": ["Standard"],
+        "allergens": ["Gluten", "Eggs", "Milk", "Soy"],
+        "dietary": [],
+        "available": true
+      },
+      {
+        "id": "PS-003",
+        "name": "Avocado Toast",
+        "description": "Sourdough toast topped with mashed avocado, cherry tomatoes, and a sprinkle of seasoning.",
+        "category": "pastries",
+        "price": 5.00,
+        "sizes": ["Standard"],
+        "allergens": ["Gluten", "Sesame"],
+        "dietary": ["Vegan", "Dairy-Free"],
+        "available": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+Given the user's order, respond with a friendly confirmation and the total price. Keep the tone warm and brief.

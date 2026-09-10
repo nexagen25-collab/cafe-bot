@@ -1,0 +1,49 @@
+{
+  "promotions": [
+    {
+      "id": "PROMO-001",
+      "name": "Morning Happy Hour",
+      "rule": "Apply a 15% discount to all coffee drinks ordered before 10:00 AM.",
+      "discount": {
+        "type": "percentage",
+        "value": 15
+      },
+      "eligible_items": ["CF-001", "CF-002", "CF-003", "CF-004", "CF-005"],
+      "eligibility": {
+        "time_window": "before 10:00 AM",
+        "min_order": null
+      },
+      "active": true
+    },
+    {
+      "id": "PROMO-002",
+      "name": "Pastry Pairing",
+      "rule": "Buy any coffee drink and get a 50% discount on a pastry.",
+      "discount": {
+        "type": "percentage",
+        "value": 50
+      },
+      "eligible_items": ["PS-001", "PS-002", "PS-003"],
+      "eligibility": {
+        "requires_purchase": "coffee",
+        "min_order": 1
+      },
+      "active": true
+    },
+    {
+      "id": "PROMO-003",
+      "name": "Weekend Bonus",
+      "rule": "Free Herbal Mint Tea with any order over $10 on weekends.",
+      "discount": {
+        "type": "free_item",
+        "item_id": "CH-003"
+      },
+      "eligible_items": ["CH-003"],
+      "eligibility": {
+        "days_of_week": ["Saturday", "Sunday"],
+        "min_order": 10.00
+      },
+      "active": false
+    }
+  ]
+}

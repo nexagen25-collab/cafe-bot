@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CafeBot Staff Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#f5f0eb;padding:16px;color:#333}
+h1{font-size:1.4rem;margin-bottom:12px;color:#6f4e37}
+.toolbar{margin-bottom:12px}
+.toolbar button{padding:6px 12px;border:1px solid #6f4e37;background:#fff;color:#6f4e37;border-radius:6px;cursor:pointer}
+.toolbar button:hover{background:#6f4e37;color:#fff}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+th,td{padding:10px 8px;text-align:left;font-size:.85rem;border-bottom:1px solid #eee;vertical-align:top}
+th{background:#6f4e37;color:#fff;font-weight:600}
+tr:last-child td{border-bottom:none}
+.items span{display:block}
+.badge{display:inline-block;padding:2px 6px;border-radius:10px;font-size:.7rem;background:#eee}
+.badge.delivery{background:#d6eaf8}
+.badge.pickup{background:#d5f5e3}
+select, button.action{padding:4px 6px;border-radius:6px;border:1px solid #ccc;font-size:.8rem}
+button.action{background:#6f4e37;color:#fff;border:none;cursor:pointer;margin-left:4px}
+button.action:hover{background:#5a3d2b}
+.empty{padding:24px;text-align:center;color:#888;background:#fff;border-radius:8px;margin-top:12px}
+@media(max-width:700px){table{font-size:.8rem}th,td{padding:6px}}
+</style>
+</head>
+<body>
+<h1>☕ CafeBot — Staff Dashboard</h1>
+<div class="toolbar">
+<button onclick="loadOrders()">Refresh</button>
+<span id="count" style="margin-left:12px;color:#666;font-size:.85rem"></span>
+</div>
+<div id="container"></div>
+<script>
+const statuses = ['confirmed','preparing','ready','completed','cancelled'];
+
+async function loadOrders(){
+  const res = await fetch('/api/orders');
+  const data = await res.json();
+  const orders = data.orders || [];
+  document.getElementById('count').textContent = orders.length + ' order(s)';
+  const container = document.getElementById('container');
+  if(orders.length===0){
+    container.innerHTML='<div class="empty">No orders yet. Orders appear here after customer confirmation.</div>';
+    return;
+  }
+  let html='<table><thead><tr><th>Order ID</th><th>Items</th><th>Fulfillment</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>';
+  orders.forEach(o=>{
+    const s = o.summary || {};
+    const items = (s.items||[]).map(it=>{
+      const custom = it.customizations && it.customizations.length ? ' ['+it.customizations.join(', ')+']' : '';
+      return it.name+' x'+it.quantity+custom;
+    }).join('<br>') || '-';
+    const fulfillment = s.fulfillment || {};
+    const fType = fulfillment.type ? '<span class="badge '+fulfillment.type+'">'+fulfillment.type+'</span>' : '-';
+    const fDetail = fulfillment.type==='delivery' ? (fulfillment.fullAddress||'') : (fulfillment.pickupTime||'');
+    const customer = fulfillment.name ? fulfillment.name + (fulfillment.phone?' <br>'+fulfillment.phone:'') : '-';
+    const total = s.totals ? '$'+s.totals.total.toFixed(2) : (o.summary && o.summary.totals ? '$'+o.summary.totals.total.toFixed(2):'-');
+    const status = o.status || (s.status||'confirmed');
+    const select = '<select data-id="'+o.orderId+'">'+statuses.map(st=>'<option value="'+st+'" '+(st===status?'selected':'')+'>'+st+'</option>').join('')+'</select><button class="action" onclick="updateStatus(\''+o.orderId+'\', this)">Update</button>';
+    html+='<tr><td><code>'+o.orderId+'</code><br><span style="color:#888;font-size:.75rem">'+new Date(o.timestamp).toLocaleString()+'</span></td><td><span class="items">'+items+'</span></td><td>'+fType+'<br><span style="color:#666">'+fDetail+'</span></td><td>'+customer+'</td><td><strong>'+total+'</strong></td><td>'+select+'<br><span style="color:#888;font-size:.75rem">'+status+'</span></td></tr>';
+  });
+  html+='</tbody></table>';
+  container.innerHTML=html;
+}
+
+async function updateStatus(orderId, btn){
+  const row = btn.closest('tr');
+  const select = row.querySelector('select');
+  const newStatus = select.value;
+  btn.textContent='Saving...'; btn.disabled=true;
+  const res = await fetch('/api/orders/'+encodeURIComponent(orderId)+'/status', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({status:newStatus})
+  });
+  const data = await res.json();
+  btn.textContent='Update'; btn.disabled=false;
+  if(!res.ok){ alert(data.error||'Failed'); return; }
+  loadOrders();
+}
+
+loadOrders();
+</script>
+</body>
+</html>

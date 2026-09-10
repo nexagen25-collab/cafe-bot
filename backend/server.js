@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Simple deterministic pricing config - not calculated by LLM
 const TAX_RATE = parseFloat(process.env.TAX_RATE) || 0.08;
-const DELIVERY_FEE = parseFloat(process.env.DELIVERY_FEE) || 3.00;
+const DELIVERY_FEE = parseFloat(process.env.DELIVERY_FEE) || 40.00;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
@@ -65,7 +65,7 @@ function formatMenu() {
   Object.keys(categories).forEach(function (key) {
     text += labels[key] || key + '\n';
     categories[key].forEach(function (item) {
-      text += '- ' + item.name + ' ($' + item.price.toFixed(2) + ')\n';
+      text += '- ' + item.name + ' (₹' + item.price.toFixed(2) + ')\n';
     });
     text += '\n';
   });
@@ -110,6 +110,10 @@ function loadActivePromotions() {
   return data.promotions.filter(function (p) { return p.active; });
 }
 
+function loadSystemPrompt() {
+  return readFile('prompts/system-prompt.md');
+}
+
 function checkPromotionEligibility(promotion, order) {
   var elig = promotion.eligibility || {};
   var now = new Date();
@@ -137,7 +141,7 @@ function checkPromotionEligibility(promotion, order) {
       }
     });
     if (subtotal < elig.min_order) {
-      return { eligible: false, reason: 'Minimum order of $' + elig.min_order.toFixed(2) + ' is required for this promotion.' };
+      return { eligible: false, reason: 'Minimum order of ₹' + elig.min_order.toFixed(2) + ' is required for this promotion.' };
     }
   }
 
@@ -261,7 +265,7 @@ function calculateOrderBreakdown(order) {
     deliveryFee: deliveryFee,
     total: total,
     taxRate: TAX_RATE,
-    currency: 'USD'
+    currency: 'INR'
   };
 }
 
@@ -452,15 +456,15 @@ function formatOrderSummary(order) {
   });
   // Deterministic breakdown - never from LLM
   var bd = order.breakdown || calculateOrderBreakdown(order);
-  text += 'Subtotal: $' + bd.subtotal.toFixed(2) + '\n';
+  text += 'Subtotal: ₹' + bd.subtotal.toFixed(2) + '\n';
   if (bd.discount > 0) {
-    text += 'Discount: -$' + bd.discount.toFixed(2) + '\n';
+    text += 'Discount: -₹' + bd.discount.toFixed(2) + '\n';
   }
-  text += 'Tax (' + Math.round(bd.taxRate * 100) + '%): $' + bd.tax.toFixed(2) + '\n';
+  text += 'Tax (' + Math.round(bd.taxRate * 100) + '%): ₹' + bd.tax.toFixed(2) + '\n';
   if (bd.deliveryFee > 0) {
-    text += 'Delivery fee: $' + bd.deliveryFee.toFixed(2) + '\n';
+    text += 'Delivery fee: ₹' + bd.deliveryFee.toFixed(2) + '\n';
   }
-  text += 'Total: $' + bd.total.toFixed(2) + '\n';
+  text += 'Total: ₹' + bd.total.toFixed(2) + '\n';
   text += 'Status: ' + order.status;
   if (order.orderType === 'delivery') {
     var d = order.customerDetails;
@@ -561,18 +565,18 @@ function formatStructuredSummaryText(summary) {
   lines.push('Order Summary:');
   summary.items.forEach(function (item) {
     var custom = item.customizations.length > 0 ? ' [' + item.customizations.join(', ') + ']' : '';
-    lines.push('- ' + item.name + ' x' + item.quantity + custom + ' @ $' + item.unitPrice.toFixed(2) + ' = $' + item.lineTotal.toFixed(2));
+    lines.push('- ' + item.name + ' x' + item.quantity + custom + ' @ ₹' + item.unitPrice.toFixed(2) + ' = ₹' + item.lineTotal.toFixed(2));
   });
-  lines.push('Subtotal: $' + summary.totals.subtotal.toFixed(2));
+  lines.push('Subtotal: ₹' + summary.totals.subtotal.toFixed(2));
   if (summary.totals.discount > 0) {
     var promoName = summary.promotions.applied ? ' (' + summary.promotions.applied.name + ')' : '';
-    lines.push('Discount' + promoName + ': -$' + summary.totals.discount.toFixed(2));
+    lines.push('Discount' + promoName + ': -₹' + summary.totals.discount.toFixed(2));
   }
-  lines.push('Tax (' + Math.round(summary.totals.taxRate * 100) + '%): $' + summary.totals.tax.toFixed(2));
+  lines.push('Tax (' + Math.round(summary.totals.taxRate * 100) + '%): ₹' + summary.totals.tax.toFixed(2));
   if (summary.totals.deliveryFee > 0) {
-    lines.push('Delivery fee: $' + summary.totals.deliveryFee.toFixed(2));
+    lines.push('Delivery fee: ₹' + summary.totals.deliveryFee.toFixed(2));
   }
-  lines.push('Total: $' + summary.totals.total.toFixed(2));
+  lines.push('Total: ₹' + summary.totals.total.toFixed(2));
   if (summary.fulfillment.type === 'delivery') {
     lines.push('Fulfillment: Delivery to ' + summary.fulfillment.fullAddress);
     lines.push('Contact: ' + summary.fulfillment.name + ' ' + summary.fulfillment.phone);
@@ -631,7 +635,7 @@ function formatRecommendations(order) {
   if (recs.length === 0) return '';
   var text = '\n\nYou might also like:\n';
   recs.forEach(function (item) {
-    text += '- ' + item.name + ' ($' + item.price.toFixed(2) + ')\n';
+    text += '- ' + item.name + ' (₹' + item.price.toFixed(2) + ')\n';
   });
   text += 'No pressure — just a suggestion!';
   return text;

@@ -57,7 +57,7 @@ async function loadOrders(){
     const fType = fulfillment.type ? '<span class="badge '+fulfillment.type+'">'+fulfillment.type+'</span>' : '-';
     const fDetail = fulfillment.type==='delivery' ? (fulfillment.fullAddress||'') : (fulfillment.pickupTime||'');
     const customer = fulfillment.name ? fulfillment.name + (fulfillment.phone?' <br>'+fulfillment.phone:'') : '-';
-    const total = s.totals ? '$'+s.totals.total.toFixed(2) : (o.summary && o.summary.totals ? '$'+o.summary.totals.total.toFixed(2):'-');
+    const total = s.totals ? '₹'+s.totals.total.toFixed(2) : (o.summary && o.summary.totals ? '₹'+o.summary.totals.total.toFixed(2):'-');
     const status = o.status || (s.status||'confirmed');
     const select = '<select data-id="'+o.orderId+'">'+statuses.map(st=>'<option value="'+st+'" '+(st===status?'selected':'')+'>'+st+'</option>').join('')+'</select><button class="action" onclick="updateStatus(\''+o.orderId+'\', this)">Update</button>';
     html+='<tr><td><code>'+o.orderId+'</code><br><span style="color:#888;font-size:.75rem">'+new Date(o.timestamp).toLocaleString()+'</span></td><td><span class="items">'+items+'</span></td><td>'+fType+'<br><span style="color:#666">'+fDetail+'</span></td><td>'+customer+'</td><td><strong>'+total+'</strong></td><td>'+select+'<br><span style="color:#888;font-size:.75rem">'+status+'</span></td></tr>';

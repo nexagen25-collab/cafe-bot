@@ -33,7 +33,7 @@
     {
       "id": "PROMO-003",
       "name": "Weekend Bonus",
-      "rule": "Free Herbal Mint Tea with any order over $10 on weekends.",
+      "rule": "Free Herbal Mint Tea with any order over ₹800 on weekends.",
       "discount": {
         "type": "free_item",
         "item_id": "CH-003"
@@ -41,7 +41,7 @@
       "eligible_items": ["CH-003"],
       "eligibility": {
         "days_of_week": ["Saturday", "Sunday"],
-        "min_order": 10.00
+        "min_order": 800.00
       },
       "active": false
     }
